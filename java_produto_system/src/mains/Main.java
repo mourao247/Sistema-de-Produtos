@@ -13,36 +13,11 @@ public class Main {
         ProdutoService funcsProd = new ProdutoService();
         Scanner scan = new Scanner(System.in);
 
-        Produto prodMesaEscritorio = new Produto();
-        prodMesaEscritorio.setNome("Mesa de Escritorio");
-        prodMesaEscritorio.setValor(250.50);
-        prodMesaEscritorio.setUnidades(50);
-
-        Produto prodCadeiraEscritorio = new Produto();
-        prodCadeiraEscritorio.setNome("Cadeira de Escritorio");
-        prodCadeiraEscritorio.setValor(298.80);
-        prodCadeiraEscritorio.setUnidades(120);
-
-        Produto prodNotebook = new Produto();
-        prodNotebook.setNome("Notebook");
-        prodNotebook.setValor(2500.00);
-        prodNotebook.setUnidades(30);
-
-        Produto prodMousepad = new Produto();
-        prodMousepad.setNome("Mousepad");
-        prodMousepad.setValor(19.99);
-        prodMousepad.setUnidades(80);
-
-        Produto prodMonitor = new Produto();
-        prodMonitor.setNome("Monitor");
-        prodMonitor.setValor(899.00);
-        prodMonitor.setUnidades(8);
-
-        armazem.add(prodMesaEscritorio);
-        armazem.add(prodCadeiraEscritorio);
-        armazem.add(prodNotebook);
-        armazem.add(prodMousepad);
-        armazem.add(prodMonitor);
+        funcsProd.criarProd(armazem, "Mesa de Escritorio", 250.50, 50);
+        funcsProd.criarProd(armazem, "Cadeira de Escritorio", 298.80, 120);
+        funcsProd.criarProd(armazem, "Notebook", 2500.00, 30);
+        funcsProd.criarProd(armazem, "Mousepad", 19.99, 80);
+        funcsProd.criarProd(armazem, "Monitor", 899.00, 8);
 
         int opcao = -1;
 
@@ -58,6 +33,8 @@ public class Main {
             System.out.println("6 - Classificar produto");
             System.out.println("7 - Produto mais caro");
             System.out.println("8 - Media dos valores");
+            System.out.println("9 - Adicionar produto");
+            System.out.println("10 - Deletar produto por ID");
             System.out.println("0 - Sair");
             System.out.print("Opcao: ");
 
@@ -106,7 +83,8 @@ public class Main {
                         Produto resultadoBusca = funcsProd.buscarPorNome(armazem, nomeBusca);
 
                         if (resultadoBusca != null) {
-                            System.out.printf("Encontrado: %s | R$ %.2f | %d unid.%n",
+                            System.out.printf("Encontrado: ID %d | %s | R$ %.2f | %d unid.%n",
+                                    resultadoBusca.getId(),
                                     resultadoBusca.getNome(),
                                     resultadoBusca.getValor(),
                                     resultadoBusca.getUnidades());
@@ -139,7 +117,8 @@ public class Main {
                             System.out.println("Produtos encontrados: " + produtosFiltrados.size());
                             for (int i = 0; i < produtosFiltrados.size(); i++) {
                                 Produto prodFiltrado = produtosFiltrados.get(i);
-                                System.out.printf("%s | R$ %.2f | %d unidades%n",
+                                System.out.printf("ID %d | %s | R$ %.2f | %d unidades%n",
+                                        prodFiltrado.getId(),
                                         prodFiltrado.getNome(),
                                         prodFiltrado.getValor(),
                                         prodFiltrado.getUnidades());
@@ -159,7 +138,8 @@ public class Main {
 
                         if (prodClassificado != null) {
                             String categoria = funcsProd.classificarProduto(prodClassificado);
-                            System.out.printf("%s (R$ %.2f) -> %s%n",
+                            System.out.printf("ID %d | %s (R$ %.2f) -> %s%n",
+                                    prodClassificado.getId(),
                                     prodClassificado.getNome(),
                                     prodClassificado.getValor(),
                                     categoria);
@@ -174,7 +154,8 @@ public class Main {
                         System.out.println("Armazem vazio.");
                     } else {
                         Produto prodMaiorValor = funcsProd.maiorValor(armazem);
-                        System.out.printf("Produto mais caro: %s | R$ %.2f | Categoria: %s%n",
+                        System.out.printf("Produto mais caro: ID %d | %s | R$ %.2f | Categoria: %s%n",
+                                prodMaiorValor.getId(),
                                 prodMaiorValor.getNome(),
                                 prodMaiorValor.getValor(),
                                 funcsProd.classificarProduto(prodMaiorValor));
@@ -187,6 +168,64 @@ public class Main {
                     } else {
                         double mediaValores = funcsProd.calcularMediaValor(armazem);
                         System.out.printf("Media dos valores: R$ %.2f%n", mediaValores);
+                    }
+                    break;
+
+                case 9:
+                    System.out.print("Digite o nome do novo produto: ");
+                    String nomeNovoProd = scan.nextLine();
+
+                    System.out.print("Digite o valor do novo produto: R$ ");
+                    if (!scan.hasNextDouble()) {
+                        System.out.println("Valor invalido.");
+                        scan.nextLine();
+                        break;
+                    }
+                    double valorNovoProd = scan.nextDouble();
+                    scan.nextLine();
+
+                    System.out.print("Digite a quantidade de unidades: ");
+                    if (!scan.hasNextInt()) {
+                        System.out.println("Quantidade invalida.");
+                        scan.nextLine();
+                        break;
+                    }
+                    int unidadesNovoProd = scan.nextInt();
+                    scan.nextLine();
+
+                    Produto prodCriado = funcsProd.criarProd(armazem, nomeNovoProd, valorNovoProd, unidadesNovoProd);
+                    System.out.printf("Produto adicionado com sucesso: ID %d | %s | R$ %.2f | %d unid.%n",
+                            prodCriado.getId(),
+                            prodCriado.getNome(),
+                            prodCriado.getValor(),
+                            prodCriado.getUnidades());
+                    break;
+
+                case 10:
+                    if (armazem.isEmpty()) {
+                        System.out.println("Armazem vazio.");
+                    } else {
+                        System.out.print("Digite o ID do produto que deseja deletar: ");
+
+                        if (!scan.hasNextInt()) {
+                            System.out.println("ID invalido.");
+                            scan.nextLine();
+                            break;
+                        }
+
+                        int idDelecao = scan.nextInt();
+                        scan.nextLine();
+
+                        Produto prodExcluir = funcsProd.buscarPorId(armazem, idDelecao);
+
+                        if (prodExcluir != null) {
+                            boolean removido = funcsProd.deleteById(armazem, idDelecao);
+                            if (removido) {
+                                System.out.println("Produto removido com sucesso: " + prodExcluir.getNome());
+                            }
+                        } else {
+                            System.out.println("Nao existe produto com o ID " + idDelecao + ".");
+                        }
                     }
                     break;
 
