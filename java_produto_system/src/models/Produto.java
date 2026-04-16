@@ -1,9 +1,20 @@
 package models;
 
 public class Produto {
+    private int id;
     private String nome;
     private double valor;
     private int unidades;
+
+    public int getId() {
+        return this.id;
+    }
+
+    public void setId(int idProduto) {
+        if (idProduto > 0) {
+            this.id = idProduto;
+        }
+    }
 
     public String getNome() {
         return this.nome;
