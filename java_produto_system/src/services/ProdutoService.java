@@ -19,8 +19,9 @@ public class ProdutoService {
 
         for (int i = 0; i < armazem.size(); i++) {
             Produto prodAtual = armazem.get(i);
-            System.out.printf("[%d] %s | R$ %.2f | %d unid.%n",
+            System.out.printf("[%d] ID: %d | %s | R$ %.2f | %d unid.%n",
                     i + 1,
+                    prodAtual.getId(),
                     prodAtual.getNome(),
                     prodAtual.getValor(),
                     prodAtual.getUnidades());
@@ -46,6 +47,16 @@ public class ProdutoService {
                 return armazem.get(i);
             }
             i++;
+        }
+
+        return null;
+    }
+
+    public Produto buscarPorId(List<Produto> armazem, int idBusca) {
+        for (int i = 0; i < armazem.size(); i++) {
+            if (armazem.get(i).getId() == idBusca) {
+                return armazem.get(i);
+            }
         }
 
         return null;
@@ -109,5 +120,39 @@ public class ProdutoService {
         }
 
         return soma / armazem.size();
+    }
+
+    public Produto criarProd(List<Produto> armazem, String nomeProd, double valorProd, int unidadesProd) {
+        Produto novoProd = new Produto();
+        novoProd.setId(gerarProximoId(armazem));
+        novoProd.setNome(nomeProd);
+        novoProd.setValor(valorProd);
+        novoProd.setUnidades(unidadesProd);
+
+        armazem.add(novoProd);
+        return novoProd;
+    }
+
+    public boolean deleteById(List<Produto> armazem, int idBusca) {
+        for (int i = 0; i < armazem.size(); i++) {
+            if (armazem.get(i).getId() == idBusca) {
+                armazem.remove(i);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private int gerarProximoId(List<Produto> armazem) {
+        int maiorId = 0;
+
+        for (int i = 0; i < armazem.size(); i++) {
+            if (armazem.get(i).getId() > maiorId) {
+                maiorId = armazem.get(i).getId();
+            }
+        }
+
+        return maiorId + 1;
     }
 }
